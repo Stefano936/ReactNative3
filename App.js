@@ -1,39 +1,28 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import React, { useState } from 'react';
-import { Button, TextInput } from 'react-native';
+import { Button, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useState } from 'react';
 
 export default function App() {
-  const [tareas, setTareas] = useState([]);
-  const [nuevaTarea, setNuevaTarea] = useState('');
-
-  const agregarTarea = () => {
-    if (nuevaTarea.trim() === '') return;
-
-    setTareas([...tareas, nuevaTarea]);
-    setNuevaTarea('');
-  };
-
-  const eliminarTarea = (index) => {
-    const nuevasTareas = [...tareas];
-    nuevasTareas.splice(index, 1);
-    setTareas(nuevasTareas);
-  };
+  const [tasks, setTasks] = useState([]);
+  const [taskName, setTaskName] = useState("");
+  
+  const handleAdd = (e) => {
+    setTasks([...tasks, { text: taskName }]);
+    setTaskName("")
+  }
 
   return (
-    <View>
-      <TextInput
-        placeholder='Nueva tarea'
-        value={nuevaTarea}
-        onChangeText={setNuevaTarea}
-      />
-      <Button onPress={agregarTarea} title="Agregar Tarea" />
-      {tareas.map((tarea, index) => (
-        <View key={index}>
-          <Text>{tarea}</Text>
-          <Button onPress={() => eliminarTarea(index)} title="Eliminar" />
-        </View>
-      ))}
+    <View style={styles.container}>
+      <Text style={styles.title}>Agregar tareas</Text>
+      
+      <View style={styles.inputContainer}>
+        <TextInput style={styles.inputContainer__input} placeholder="Escribe una tarea" onChangeText={text => setTaskName(text)} value={taskName} />
+        <Button style={styles.inputContainer__button} title="Agregar" onPress={handleAdd} />
+      </View>
+
+      <View style={styles.showcase}>
+        <Text style={styles.showcase__title}>Tareas Creadas</Text>
+        <FlatList style={styles.showcase__list} data={tasks} renderItem={({ item }) => <Text>{item.text}</Text>} />
+      </View>
     </View>
   );
 }
@@ -45,13 +34,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
 
-/*
-Crear una lista de tareas donde se pueda añadir y eliminar elementos.
-Tareas:
-•	Usar un useState para manejar la lista de tareas.
-•	Añadir un TextInput para escribir nuevas tareas y un botón para añadirlas.
-•	Mostrar las tareas en una lista debajo del campo de entrada.
-•	Agregar un botón junto a cada tarea para eliminarla.
-*/
+  title: {
+    fontSize: 30,
+    marginBottom: 20,
+  },
+
+  inputContainer: {
+    width: "80%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  inputContainer__input: {
+    width: "70%",
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#000",
+  },
+
+  showcase: {
+    width: "80%",
+    marginTop: 30,
+  },
+
+  showcase__title: {
+    fontSize: 20,
+    marginBottom: 10,
+    textAlign: "center",
+  },
+
+  showcase__list: {
+    width: "100%",
+  },
+});
